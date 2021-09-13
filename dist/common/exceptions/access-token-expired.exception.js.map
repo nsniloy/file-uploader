@@ -1,1 +1,0 @@
-{"version":3,"file":"access-token-expired.exception.js","sourceRoot":"","sources":["../../../src/common/exceptions/access-token-expired.exception.ts"],"names":[],"mappings":";;;AAAA,2CAAuD;AACvD,oCAAqC;AAErC,MAAa,2BAA4B,SAAQ,8BAAqB;IACpE;QACE,KAAK,CAAC;YACJ,SAAS,EAAE,iBAAS,CAAC,kBAAkB;YACvC,OAAO,EAAE,qCAAqC;SAC/C,CAAC,CAAC;IACL,CAAC;CACF;AAPD,kEAOC"}

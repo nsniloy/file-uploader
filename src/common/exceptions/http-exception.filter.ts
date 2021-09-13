@@ -5,7 +5,6 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { HttpErrorType } from './http-error-type';
-import { ErrorType } from '../enums';
 import { Response } from 'express';
 
 @Catch(HttpException)
@@ -16,7 +15,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = +exception.getStatus();
     const success = false;
     let { errorType, message } = exception.getResponse() as {
-      errorType: ErrorType | string;
+      errorType: string;
       message: string | string[];
     };
 

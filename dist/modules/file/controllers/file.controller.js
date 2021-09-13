@@ -17,6 +17,8 @@ const common_1 = require("@nestjs/common");
 const services_1 = require("../services");
 const swagger_1 = require("@nestjs/swagger");
 const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const file_rename_middleware_1 = require("../../../common/middlewares/file-rename.middleware");
 let FileController = class FileController {
     constructor(fileService) {
         this.fileService = fileService;
@@ -34,7 +36,12 @@ let FileController = class FileController {
 __decorate([
     swagger_1.ApiOperation({ description: 'Uploads new file(s)' }),
     common_1.Post(),
-    common_1.UseInterceptors(platform_express_1.FilesInterceptor('files')),
+    common_1.UseInterceptors(platform_express_1.FilesInterceptor('files', 20, {
+        storage: multer_1.diskStorage({
+            destination: './upload',
+            filename: file_rename_middleware_1.editFileName,
+        })
+    })),
     __param(0, common_1.UploadedFiles()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),

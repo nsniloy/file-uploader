@@ -7,8 +7,7 @@ export class FileService {
   constructor(private repository: FileRepository) {}
   async create(files: Array<Express.Multer.File>) {
     console.log(files);
-    
-    return await this.repository.save({});
+    // return await this.repository.save({});
   }
 
   async findAll() {

@@ -18,7 +18,6 @@ let FileService = class FileService {
     }
     async create(files) {
         console.log(files);
-        return await this.repository.save({});
     }
     async findAll() {
         return await this.repository.find();

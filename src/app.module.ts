@@ -21,13 +21,6 @@ import { MulterModule } from '@nestjs/platform-express';
       },
       inject: [ConfigService],
     }),
-    MulterModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        dest: configService.get('folderRoot')+'/storage',
-      }),
-      inject: [ConfigService],
-    }),
     HttpModule,
     FileModule
   ],

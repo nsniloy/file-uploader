@@ -2,25 +2,29 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Param,
   Delete,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileService } from '../services';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express'
+import { diskStorage } from 'multer'
+import { editFileName } from '@common/middlewares/file-rename.middleware';
 
 @ApiTags('Files')
 @Controller('files')
 export class FileController {
-  constructor(private readonly fileService: FileService) {}
+  constructor(private readonly fileService: FileService) { }
 
   @ApiOperation({ description: 'Uploads new file(s)' })
   @Post()
-  @UseInterceptors(FilesInterceptor('files'))
+  @UseInterceptors(FilesInterceptor('files', 20, {
+    storage: diskStorage({
+      filename: editFileName,
+    })
+  }))
   async uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
     return await this.fileService.create(files);
   }
@@ -37,3 +41,4 @@ export class FileController {
     return await this.fileService.remove(id);
   }
 }
+

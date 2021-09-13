@@ -1,5 +1,5 @@
 import { BaseEntity } from 'typeorm';
-export declare class file extends BaseEntity {
+export declare class File extends BaseEntity {
     id: number;
     name: string;
     action: string;

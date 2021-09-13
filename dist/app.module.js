@@ -14,7 +14,6 @@ const config_1 = require("@nestjs/config");
 const configuration_1 = require("./config/configuration");
 const file_module_1 = require("./modules/file/file.module");
 const typeorm_1 = require("@nestjs/typeorm");
-const platform_express_1 = require("@nestjs/platform-express");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -30,13 +29,6 @@ AppModule = __decorate([
                 useFactory: async (configService) => {
                     return configService.get('database');
                 },
-                inject: [config_1.ConfigService],
-            }),
-            platform_express_1.MulterModule.registerAsync({
-                imports: [config_1.ConfigModule],
-                useFactory: async (configService) => ({
-                    dest: configService.get('folderRoot') + '/storage',
-                }),
                 inject: [config_1.ConfigService],
             }),
             common_1.HttpModule,
