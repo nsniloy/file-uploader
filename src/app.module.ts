@@ -7,7 +7,7 @@ import { FileModule } from '@modules/file/file.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { existsSync, mkdirSync } from 'fs';
-import { FileAccessModule } from '@modules/file-process/file-process.module';
+import { FileProcessModule } from '@modules/file-process/file-process.module';
 
 @Module({
   imports: [
@@ -38,7 +38,7 @@ import { FileAccessModule } from '@modules/file-process/file-process.module';
     }),
     HttpModule,
     FileModule,
-    FileAccessModule
+    FileProcessModule
   ],
   controllers: [AppController],
   providers: [AppService],

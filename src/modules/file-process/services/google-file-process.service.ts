@@ -1,11 +1,11 @@
 import { IFile } from '@modules/file/entities/definitions/file.interface';
 import { Injectable } from '@nestjs/common';
-import { IFileAccess } from './definitions/file-access.interface';
+import { IFileProcess } from './definitions/file-access.interface';
 import { ConfigService } from '@nestjs/config';
 import { Storage } from '@google-cloud/storage';
 
 @Injectable()
-export class GoogleFileAccessService implements IFileAccess {
+export class GoogleFileProcessService implements IFileProcess {
     private storage: any;
     constructor(
         private config: ConfigService,

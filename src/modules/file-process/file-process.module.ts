@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { GoogleFileAccessService } from './services/google-file-process.service';
-import { LocalFileAccessService } from './services/local-file-process.service';
+import { GoogleFileProcessService } from './services/google-file-process.service';
+import { LocalFileProcessService } from './services/local-file-process.service';
 
 @Module({
   providers: [
-    LocalFileAccessService,
-    GoogleFileAccessService
+    LocalFileProcessService,
+    GoogleFileProcessService
   ],
   exports: [
-    LocalFileAccessService,
-    GoogleFileAccessService
+    LocalFileProcessService,
+    GoogleFileProcessService
   ]
 })
-export class FileAccessModule {}
+export class FileProcessModule {}

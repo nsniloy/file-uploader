@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { createDiffieHellman } from 'crypto';
 import { IFile } from '../entities/definitions/file.interface';
 import { FileRepository } from '../repository/file.repository';
-import { LocalFileAccessService } from '@modules/file-process/services/local-file-process.service';
-import { GoogleFileAccessService } from '@modules/file-process/services/google-file-process.service';
+import { LocalFileProcessService } from '@modules/file-process/services/local-file-process.service';
+import { GoogleFileProcessService } from '@modules/file-process/services/google-file-process.service';
 import { StatusType } from '@common/enums/status.enum';
 
 @Injectable()
@@ -13,8 +13,8 @@ export class FileService {
   constructor(
     private repository: FileRepository,
     private config: ConfigService,
-    private localFileAccessService: LocalFileAccessService,
-    private googleFileAccessService: GoogleFileAccessService,
+    private localFileProcessService: LocalFileProcessService,
+    private googleFileProcessService: GoogleFileProcessService,
   ) { }
   async create(files: Array<Express.Multer.File>) {
     try {
@@ -32,9 +32,9 @@ export class FileService {
         }
       })
       if (provider == StorageProviderType.Google) {
-        await this.googleFileAccessService.saveFiles(data)
+        await this.googleFileProcessService.saveFiles(data)
       } else if (provider == StorageProviderType.Local) {
-        await this.localFileAccessService.saveFiles(data)
+        await this.localFileProcessService.saveFiles(data)
       }
       await this.repository.save(data);
       return {
@@ -62,7 +62,7 @@ export class FileService {
         item.status = StatusType.Deleted
         return item
       })
-      this.localFileAccessService.removeFiles(files)
+      this.localFileProcessService.removeFiles(files)
       await this.repository.save(files);
       return;
     } catch (error) {

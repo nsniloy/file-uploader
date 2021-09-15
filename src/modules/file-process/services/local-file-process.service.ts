@@ -1,12 +1,12 @@
 import { IFile } from '@modules/file/entities/definitions/file.interface';
 import { Injectable } from '@nestjs/common';
-import { IFileAccess } from './definitions/file-access.interface';
-import AdmZip from 'adm-zip';
+import { IFileProcess } from './definitions/file-access.interface';
+import * as AdmZip from 'adm-zip';
 import { unlinkSync } from 'fs'
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class LocalFileAccessService implements IFileAccess {
+export class LocalFileProcessService implements IFileProcess {
     constructor(
         private config: ConfigService,
     ) { }
@@ -14,8 +14,12 @@ export class LocalFileAccessService implements IFileAccess {
         if (files.length < 2) {
             return;
         }
+        console.log(1211);
+        
         let storageFolder: string = this.config.get('storageFolder');
         let zip = new AdmZip()
+        console.log(zip);
+        
         files.forEach(element => {
             //adding each file to zip
             zip.addLocalFile(element.location);

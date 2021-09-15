@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LocalFileAccessService } from './local-file-process.service';
+import { LocalFileProcessService } from './local-file-process.service';
 
-describe('LocalFileAccessService', () => {
-  let service: LocalFileAccessService;
+describe('LocalFileProcessService', () => {
+  let service: LocalFileProcessService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LocalFileAccessService],
+      providers: [LocalFileProcessService],
     }).compile();
 
-    service = module.get<LocalFileAccessService>(LocalFileAccessService);
+    service = module.get<LocalFileProcessService>(LocalFileProcessService);
   });
 
   it('should be defined', () => {
