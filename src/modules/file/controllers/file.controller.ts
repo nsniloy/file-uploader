@@ -7,7 +7,6 @@ import {
   UploadedFiles,
   UseInterceptors,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import { FileService } from '../services';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -29,12 +28,12 @@ export class FileController {
 
   @ApiOperation({ description: 'Uploads new files' })
   @Post()
-  @RateLimit({
+  @RateLimit({ //setting up rate limit and duration
     duration: 60 * 60 * 24,
     points: Number(process.env.UPLOAD_LIMIT) || 1000
   })
   @UseInterceptors(FilesInterceptor('files', 10, {
-    storage: diskStorage({
+    storage: diskStorage({ //setting up file saving configuration
       filename: editFileName,
       destination: process.env.FOLDER
     })
@@ -47,7 +46,7 @@ export class FileController {
   }
 
   @ApiOperation({ description: 'Returns all files for a public key' })
-  @RateLimit({
+  @RateLimit({ //setting up rate limit and duration
     duration: 60 * 60 * 24,
     points: Number(process.env.DOWNLOAD_LIMIT) || 1000
   })

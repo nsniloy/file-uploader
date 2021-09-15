@@ -1,33 +1,34 @@
 import { IFile } from '@modules/file/entities/definitions/file.interface';
 import { Injectable } from '@nestjs/common';
-import { IFileProcess } from './definitions/file-access.interface';
+import { IFileStorage } from './definitions/file-storage.interface';
 import { ConfigService } from '@nestjs/config';
 import { Storage } from '@google-cloud/storage';
-import { LocalFileProcessService } from './local-file-process.service';
+import { LocalFileStorageService } from './local-file-storage.service';
 
 @Injectable()
-export class GoogleFileProcessService implements IFileProcess {
+export class GoogleFileStorageService implements IFileStorage {
     private storage: any;
     private storageFolder: string;
     private bucketName: string;
     constructor(
         private config: ConfigService,
-        private localFileProcessService: LocalFileProcessService,
+        private localFileStorageService: LocalFileStorageService,
     ) {
         this.bucketName = this.config.get('bucketName');
         this.storageFolder = this.config.get('storageFolder');
         this.storage = new Storage();
-        this.storage.bucket(this.bucketName);
     }
-    async saveFiles(files: Array<Express.Multer.File>, publicKey: string, privateKey: string): Promise<void> {
+    async saveFiles(files: Array<Express.Multer.File>, publicKey: string): Promise<void> {
         let fileName = `${files[0].filename}`
         let filePath = `${this.storageFolder}/${fileName}`
         if (files.length > 1) {
-            this.localFileProcessService.convertToZip(files, publicKey)
+            //converting multiple files in one zip file
+            this.localFileStorageService.convertToZip(files, publicKey)
             fileName = `${publicKey}.zip`
             filePath = `${this.storageFolder}/${fileName}`
         }
-        await this.storage.bucket.upload(filePath, {
+        //uploading to google cloud storage
+        await this.storage.bucket(this.bucketName).upload(filePath, {
             destination: fileName,
         });
         return;

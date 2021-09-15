@@ -4,20 +4,24 @@ import { ConfigService } from '@nestjs/config';
 import { createDiffieHellman } from 'crypto';
 import { IFile } from '../entities/definitions/file.interface';
 import { FileRepository } from '../repository/file.repository';
-import { LocalFileProcessService } from '@modules/file-process/services/local-file-process.service';
-import { GoogleFileProcessService } from '@modules/file-process/services/google-file-process.service';
+import { LocalFileStorageService } from '@modules/file-storage/services/local-file-storage.service';
+import { GoogleFileStorageService } from '@modules/file-storage/services/google-file-storage.service';
 import { StatusType } from '@common/enums/status.enum';
+import { LessThan, MoreThan } from 'typeorm';
+import * as moment from 'moment';
 
 @Injectable()
 export class FileService {
   private storageFolder: string;
+  private activePeriod: number;
   constructor(
     private repository: FileRepository,
     private config: ConfigService,
-    private localFileProcessService: LocalFileProcessService,
-    private googleFileProcessService: GoogleFileProcessService,
+    private localFileStorageService: LocalFileStorageService,
+    private googleFileStorageService: GoogleFileStorageService,
   ) {
     this.storageFolder = this.config.get('storageFolder');
+    this.activePeriod = this.config.get('activePeriod');
   }
   async create(files: Array<Express.Multer.File>) {
     try {
@@ -34,9 +38,9 @@ export class FileService {
         }
       })
       if (provider == StorageProviderType.Google) {
-        await this.googleFileProcessService.saveFiles(files, publicKey, privateKey)
+        await this.googleFileStorageService.saveFiles(files, publicKey)
       } else if (provider == StorageProviderType.Local) {
-        await this.localFileProcessService.saveFiles(files, publicKey, privateKey)
+        await this.localFileStorageService.saveFiles(files, publicKey)
       }
       await this.repository.save(data);
       return {
@@ -64,7 +68,11 @@ export class FileService {
         item.status = StatusType.Deleted
         return item
       })
-      this.localFileProcessService.removeFiles(files)
+      if (files[0].provider == StorageProviderType.Local) {
+        this.localFileStorageService.removeFiles(files)
+      } else {
+        this.googleFileStorageService.removeFiles(files)
+      }
       await this.repository.save(files);
       return;
     } catch (error) {
@@ -73,7 +81,48 @@ export class FileService {
     }
   }
 
+  async findExpired() {
+    let date = new Date(moment().subtract(this.activePeriod, 'days').format())
+    let files = await this.repository.findExpired(date);
+    return files;
+  }
+
+  async removeExpired() {
+    try {
+      //getting files that will be deleted
+      let files: IFile[] = await this.findExpired();
+      if (!files.length) {
+        return;
+      }
+      let localFiles: IFile[] = []
+      let googleFiles: IFile[] = []
+
+      files = files.map((item) => {
+        //updating status to deleted
+        item.status = StatusType.Deleted;
+
+        //seperating the array by provider type
+        if (item.provider == StorageProviderType.Local) {
+          localFiles.push(item)
+        } else {
+          googleFiles.push(item)
+        }
+        return item;
+      })
+
+      this.localFileStorageService.removeFiles(localFiles);
+      this.googleFileStorageService.removeFiles(googleFiles);
+      await this.repository.save(files);
+
+      return;
+    } catch (error) {
+      Logger.error(error);
+      throw new ConflictException('Could not save the file!!');
+    }
+  }
+
   private generateKeys() {
+    //create public key and private key
     let diffHell = createDiffieHellman(60);
     diffHell.generateKeys('hex');
     let publicKey = diffHell.getPublicKey('hex');

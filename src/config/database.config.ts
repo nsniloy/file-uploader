@@ -1,14 +1,14 @@
 require('dotenv').config()
 export default {
   type: 'mysql',
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USER,
+  host: process.env.DB_HOST || '165.232.185.240',
+  port: process.env.DB_PORT || 3306,
+  username: process.env.DB_USER || 'dev_test',
+  password: process.env.DB_PASSWORD || 'Az-12345',
+  database: process.env.DB_NAME || 'meldcx',
   autoLoadEntities: true,
   charset: 'utf8',
-  password: process.env.DB_PASSWORD,
   entities: ['dist/**/*.entity{.ts,.js}'],
-  database: process.env.DB_NAME,
   synchronize: true,
   cli: {
     migrationsDir: 'migrations',

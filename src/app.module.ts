@@ -7,10 +7,12 @@ import { FileModule } from '@modules/file/file.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { existsSync, mkdirSync } from 'fs';
-import { FileProcessModule } from '@modules/file-process/file-process.module';
+import { FileStorageModule } from '@modules/file-storage/file-storage.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       load: [configuration],
       isGlobal: true,
@@ -38,7 +40,7 @@ import { FileProcessModule } from '@modules/file-process/file-process.module';
     }),
     HttpModule,
     FileModule,
-    FileProcessModule
+    FileStorageModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,22 +1,23 @@
 import { IFile } from '@modules/file/entities/definitions/file.interface';
 import { Injectable } from '@nestjs/common';
-import { IFileProcess } from './definitions/file-access.interface';
+import { IFileStorage } from './definitions/file-storage.interface';
 import * as AdmZip from 'adm-zip';
 import { unlinkSync } from 'fs'
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class LocalFileProcessService implements IFileProcess {
+export class LocalFileStorageService implements IFileStorage {
     private storageFolder: string;
     constructor(
         private config: ConfigService,
     ) {
         this.storageFolder = this.config.get('storageFolder');
     }
-    async saveFiles(files: Array<Express.Multer.File>, publicKey: string, privateKey: string): Promise<void> {
+    async saveFiles(files: Array<Express.Multer.File>, publicKey: string): Promise<void> {
         if (files.length < 2) {
             return;
         }
+        //converting multiple files in one zip file
         this.convertToZip(files, publicKey)
         return;
     }
@@ -34,6 +35,7 @@ export class LocalFileProcessService implements IFileProcess {
             let location = `${this.storageFolder}/${element.filename}`
             zip.addLocalFile(location);
         });
+        //saving zip file to disk
         zip.writeZip(`${this.storageFolder}/${publicKey}.zip`)
     }
 }
