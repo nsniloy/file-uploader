@@ -10,19 +10,21 @@ import { StatusType } from '@common/enums/status.enum';
 
 @Injectable()
 export class FileService {
+  private storageFolder: string;
   constructor(
     private repository: FileRepository,
     private config: ConfigService,
     private localFileProcessService: LocalFileProcessService,
     private googleFileProcessService: GoogleFileProcessService,
-  ) { }
+  ) {
+    this.storageFolder = this.config.get('storageFolder');
+  }
   async create(files: Array<Express.Multer.File>) {
     try {
       let provider: StorageProviderType = this.config.get('provider');
-      let storageFolder: string = this.config.get('storageFolder');
       const { privateKey, publicKey } = this.generateKeys()
       let data: IFile[] = files.map((item) => {
-        let location = `${storageFolder}/${item.filename}`
+        let location = `${this.storageFolder}/${item.filename}`
         return {
           name: item.filename,
           provider,
@@ -32,9 +34,9 @@ export class FileService {
         }
       })
       if (provider == StorageProviderType.Google) {
-        await this.googleFileProcessService.saveFiles(data)
+        await this.googleFileProcessService.saveFiles(files, publicKey, privateKey)
       } else if (provider == StorageProviderType.Local) {
-        await this.localFileProcessService.saveFiles(data)
+        await this.localFileProcessService.saveFiles(files, publicKey, privateKey)
       }
       await this.repository.save(data);
       return {

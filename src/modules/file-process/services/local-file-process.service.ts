@@ -7,30 +7,33 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class LocalFileProcessService implements IFileProcess {
+    private storageFolder: string;
     constructor(
         private config: ConfigService,
-    ) { }
-    async saveFiles(files: IFile[]): Promise<void> {
+    ) {
+        this.storageFolder = this.config.get('storageFolder');
+    }
+    async saveFiles(files: Array<Express.Multer.File>, publicKey: string, privateKey: string): Promise<void> {
         if (files.length < 2) {
             return;
         }
-        console.log(1211);
-        
-        let storageFolder: string = this.config.get('storageFolder');
-        let zip = new AdmZip()
-        console.log(zip);
-        
-        files.forEach(element => {
-            //adding each file to zip
-            zip.addLocalFile(element.location);
-        });
-        zip.writeZip(`${storageFolder}/${files[0].publicKey}.zip`)
-        //return download url
+        this.convertToZip(files, publicKey)
+        return;
     }
 
     removeFiles(files: IFile[]): void {
         files.forEach((item) => {
             unlinkSync(item.location)
         })
+    }
+
+    convertToZip(files: Array<Express.Multer.File>, publicKey: string) {
+        let zip = new AdmZip()
+        //adding each file to zip
+        files.forEach(element => {
+            let location = `${this.storageFolder}/${element.filename}`
+            zip.addLocalFile(location);
+        });
+        zip.writeZip(`${this.storageFolder}/${publicKey}.zip`)
     }
 }
