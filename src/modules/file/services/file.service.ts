@@ -49,7 +49,7 @@ export class FileService {
       }
     } catch (error) {
       Logger.error(error)
-      throw new ConflictException('Could not save the file!!')
+      throw new ConflictException(error.message || 'Could not save the file!!')
     }
   }
 
@@ -76,8 +76,8 @@ export class FileService {
       await this.repository.save(files);
       return;
     } catch (error) {
-      Logger.error(error)
-      throw new ConflictException('Could not save the file!!')
+      Logger.error(error.message)
+      throw new ConflictException(error.message || 'Could not remove the file!!')
     }
   }
 

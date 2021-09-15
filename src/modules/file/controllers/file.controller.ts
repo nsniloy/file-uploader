@@ -9,7 +9,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { FileService } from '../services';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiConsumes } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { editFileName } from '@common/middlewares/file-rename.middleware';
@@ -17,6 +17,7 @@ import { Response } from 'express';
 import { IFile } from '../entities/definitions/file.interface';
 import { ConfigService } from '@nestjs/config';
 import { RateLimit } from 'nestjs-rate-limiter';
+import { ApiFile } from '@common/decorators/api-file.decorator';
 
 @ApiTags('Files')
 @Controller('files')
@@ -27,6 +28,8 @@ export class FileController {
   ) { }
 
   @ApiOperation({ description: 'Uploads new files' })
+  @ApiConsumes('multipart/form-data')
+  @ApiFile()
   @Post()
   @RateLimit({ //setting up rate limit and duration
     duration: 60 * 60 * 24,
