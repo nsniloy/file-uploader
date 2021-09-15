@@ -1,8 +1,11 @@
+import { StatusType } from '@common/enums/status.enum';
+import { StorageProviderType } from '@common/enums/storage.enum';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -12,29 +15,44 @@ export class File extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    type: String
+  })
   name: string;
 
-  @Column()
-  action: string;
-
-  @Column()
-  module: string;
-
-  @Column()
-  sub_module: string;
+  @Column({
+    type: String
+  })
+  location: string;
 
   @Column({
-    nullable: true,
+    type: String,
+    default: StorageProviderType.Local
   })
-  child: string;
+  provider: StorageProviderType;
 
-  @Column()
-  created_by: string;
+  @Column({
+    type: String
+  })
+  @Index()
+  publicKey: string;
+
+  @Column({
+    type: String
+  })
+  @Index()
+  privateKey: string;
+
+  @Column({
+    type: String,
+    default: StatusType.Active
+  })
+  @Index()
+  status: StatusType;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 }

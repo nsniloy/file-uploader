@@ -7,6 +7,7 @@ const compression = require("compression");
 const helmet = require("helmet");
 const _config_1 = require("./config");
 const exceptions_1 = require("./common/exceptions");
+const zip = require("express-easy-zip");
 const http_1 = require("./common/interceptors/http");
 const config_1 = require("@nestjs/config");
 const bootstrap = async () => {
@@ -16,6 +17,7 @@ const bootstrap = async () => {
     const prefix = configService.get('api_prefix');
     app.use(helmet());
     app.use(compression());
+    app.use(zip());
     app.enableCors();
     app.useGlobalFilters();
     app.useGlobalFilters(new exceptions_1.HttpExceptionFilter());

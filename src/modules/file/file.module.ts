@@ -3,10 +3,23 @@ import { FileService } from './services/file.service';
 import { FileController } from './controllers/file.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileRepository } from './repository/file.repository';
+import { FileAccessModule } from '@modules/file-process/file-process.module';
+import { RateLimiterModule, RateLimiterGuard } from 'nestjs-rate-limiter'
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FileRepository])],
+  imports: [
+    TypeOrmModule.forFeature([FileRepository]),
+    RateLimiterModule.register(),
+    FileAccessModule
+  ],
   controllers: [FileController],
-  providers: [FileService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RateLimiterGuard,
+  },
+    FileService
+  ],
 })
-export class FileModule {}
+export class FileModule { }

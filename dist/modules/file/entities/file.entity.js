@@ -10,6 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.File = void 0;
+const status_enum_1 = require("../../../common/enums/status.enum");
+const storage_enum_1 = require("../../../common/enums/storage.enum");
 const typeorm_1 = require("typeorm");
 let File = class File extends typeorm_1.BaseEntity {
 };
@@ -18,39 +20,54 @@ __decorate([
     __metadata("design:type", Number)
 ], File.prototype, "id", void 0);
 __decorate([
-    typeorm_1.Column(),
+    typeorm_1.Column({
+        type: String
+    }),
     __metadata("design:type", String)
 ], File.prototype, "name", void 0);
 __decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], File.prototype, "action", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], File.prototype, "module", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], File.prototype, "sub_module", void 0);
-__decorate([
     typeorm_1.Column({
-        nullable: true,
+        type: String
     }),
     __metadata("design:type", String)
-], File.prototype, "child", void 0);
+], File.prototype, "location", void 0);
 __decorate([
-    typeorm_1.Column(),
+    typeorm_1.Column({
+        type: String,
+        default: storage_enum_1.StorageProviderType.Local
+    }),
     __metadata("design:type", String)
-], File.prototype, "created_by", void 0);
+], File.prototype, "provider", void 0);
+__decorate([
+    typeorm_1.Column({
+        type: String
+    }),
+    typeorm_1.Index(),
+    __metadata("design:type", String)
+], File.prototype, "publicKey", void 0);
+__decorate([
+    typeorm_1.Column({
+        type: String
+    }),
+    typeorm_1.Index(),
+    __metadata("design:type", String)
+], File.prototype, "privateKey", void 0);
+__decorate([
+    typeorm_1.Column({
+        type: String,
+        default: status_enum_1.StatusType.Active
+    }),
+    typeorm_1.Index(),
+    __metadata("design:type", String)
+], File.prototype, "status", void 0);
 __decorate([
     typeorm_1.CreateDateColumn(),
     __metadata("design:type", Date)
-], File.prototype, "created_at", void 0);
+], File.prototype, "createdAt", void 0);
 __decorate([
     typeorm_1.UpdateDateColumn(),
     __metadata("design:type", Date)
-], File.prototype, "updated_at", void 0);
+], File.prototype, "updatedAt", void 0);
 File = __decorate([
     typeorm_1.Entity()
 ], File);

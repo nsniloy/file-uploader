@@ -9,7 +9,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RequestLoggingInterceptor = void 0;
 const common_1 = require("@nestjs/common");
 const operators_1 = require("rxjs/operators");
-const uuid_1 = require("uuid");
 const common_2 = require("@nestjs/common");
 let RequestLoggingInterceptor = class RequestLoggingInterceptor {
     intercept(context, next) {
@@ -17,9 +16,6 @@ let RequestLoggingInterceptor = class RequestLoggingInterceptor {
             const ctx = context.switchToHttp();
             const request = ctx.getRequest();
             const response = ctx.getResponse();
-            const request_id = uuid_1.v4().split('-').join('');
-            request.headers['X-Request-Id'] = request_id;
-            response.set('X-Request-Id', request_id);
             return next.handle().pipe(operators_1.tap((data) => {
                 const requestDetails = {
                     method: request.method,

@@ -14,6 +14,9 @@ const config_1 = require("@nestjs/config");
 const configuration_1 = require("./config/configuration");
 const file_module_1 = require("./modules/file/file.module");
 const typeorm_1 = require("@nestjs/typeorm");
+const platform_express_1 = require("@nestjs/platform-express");
+const fs_1 = require("fs");
+const file_process_module_1 = require("./modules/file-process/file-process.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -31,8 +34,22 @@ AppModule = __decorate([
                 },
                 inject: [config_1.ConfigService],
             }),
+            platform_express_1.MulterModule.registerAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: async (configService) => {
+                    let dest = configService.get('storageFolder');
+                    if (!fs_1.existsSync(dest)) {
+                        fs_1.mkdirSync(dest);
+                    }
+                    return {
+                        dest,
+                    };
+                },
+                inject: [config_1.ConfigService],
+            }),
             common_1.HttpModule,
-            file_module_1.FileModule
+            file_module_1.FileModule,
+            file_process_module_1.FileAccessModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

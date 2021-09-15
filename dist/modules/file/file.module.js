@@ -12,13 +12,26 @@ const file_service_1 = require("./services/file.service");
 const file_controller_1 = require("./controllers/file.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const file_repository_1 = require("./repository/file.repository");
+const file_process_module_1 = require("../file-process/file-process.module");
+const nestjs_rate_limiter_1 = require("nestjs-rate-limiter");
+const core_1 = require("@nestjs/core");
 let FileModule = class FileModule {
 };
 FileModule = __decorate([
     common_1.Module({
-        imports: [typeorm_1.TypeOrmModule.forFeature([file_repository_1.FileRepository])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([file_repository_1.FileRepository]),
+            nestjs_rate_limiter_1.RateLimiterModule.register(),
+            file_process_module_1.FileAccessModule
+        ],
         controllers: [file_controller_1.FileController],
-        providers: [file_service_1.FileService],
+        providers: [
+            {
+                provide: core_1.APP_GUARD,
+                useClass: nestjs_rate_limiter_1.RateLimiterGuard,
+            },
+            file_service_1.FileService
+        ],
     })
 ], FileModule);
 exports.FileModule = FileModule;

@@ -5,12 +5,12 @@ import * as compression from 'compression';
 import * as helmet from 'helmet';
 import { configSwagger } from '@config';
 import { HttpExceptionFilter } from '@common/exceptions';
+import * as zip from 'express-easy-zip'
 import {
   RequestLoggingInterceptor,
   ResponseTransformInterceptor,
 } from '@common/interceptors/http';
 import { ConfigService } from '@nestjs/config';
-import * as Sentry from '@sentry/node';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +20,7 @@ const bootstrap = async () => {
 
   app.use(helmet());
   app.use(compression());
+  app.use(zip());
   app.enableCors();
   app.useGlobalFilters();
   app.useGlobalFilters(new HttpExceptionFilter());

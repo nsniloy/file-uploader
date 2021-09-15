@@ -7,7 +7,6 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { Logger } from '@nestjs/common';
 
 @Injectable()
@@ -17,12 +16,6 @@ export class RequestLoggingInterceptor implements NestInterceptor {
       const ctx = context.switchToHttp();
       const request = ctx.getRequest<Request>();
       const response = ctx.getResponse<Response>();
-
-      const request_id = uuidv4().split('-').join('');
-
-      request.headers['X-Request-Id'] = request_id;
-      response.set('X-Request-Id', request_id);
-
       return next.handle().pipe(
         tap((data) => {
           const requestDetails = {

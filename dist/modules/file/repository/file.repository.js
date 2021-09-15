@@ -9,7 +9,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileRepository = void 0;
 const file_entity_1 = require("../entities/file.entity");
 const typeorm_1 = require("typeorm");
+const status_enum_1 = require("../../../common/enums/status.enum");
 let FileRepository = class FileRepository extends typeorm_1.Repository {
+    async findByPublicKey(publicKey) {
+        return await this.find({
+            publicKey,
+            status: status_enum_1.StatusType.Active
+        });
+    }
+    async findByPrivateKey(privateKey) {
+        return await this.find({
+            privateKey,
+            status: status_enum_1.StatusType.Active
+        });
+    }
 };
 FileRepository = __decorate([
     typeorm_1.EntityRepository(file_entity_1.File)

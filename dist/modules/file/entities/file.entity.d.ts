@@ -1,12 +1,14 @@
+import { StatusType } from '@common/enums/status.enum';
+import { StorageProviderType } from '@common/enums/storage.enum';
 import { BaseEntity } from 'typeorm';
 export declare class File extends BaseEntity {
     id: number;
     name: string;
-    action: string;
-    module: string;
-    sub_module: string;
-    child: string;
-    created_by: string;
-    created_at: Date;
-    updated_at: Date;
+    location: string;
+    provider: StorageProviderType;
+    publicKey: string;
+    privateKey: string;
+    status: StatusType;
+    createdAt: Date;
+    updatedAt: Date;
 }

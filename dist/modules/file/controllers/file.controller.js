@@ -19,27 +19,44 @@ const swagger_1 = require("@nestjs/swagger");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const file_rename_middleware_1 = require("../../../common/middlewares/file-rename.middleware");
+const config_1 = require("@nestjs/config");
+const nestjs_rate_limiter_1 = require("nestjs-rate-limiter");
 let FileController = class FileController {
-    constructor(fileService) {
+    constructor(fileService, configService) {
         this.fileService = fileService;
+        this.configService = configService;
     }
     async uploadFile(files) {
-        return await this.fileService.create(files);
+        return Object.assign(Object.assign({}, await this.fileService.create(files)), { message: 'Files saved successfully!!' });
     }
-    async findAll() {
-        return await this.fileService.findAll();
+    async downloadByKey(publicKey, res) {
+        let files = await this.fileService.findByKey(publicKey);
+        if (files.length == 1) {
+            res.download(files[0].location);
+        }
+        else {
+            let folderRoot = this.configService.get('storageFolder');
+            res.download(`${folderRoot}/${publicKey}.zip`);
+        }
     }
-    async remove(id) {
-        return await this.fileService.remove(id);
+    async remove(privateKey) {
+        await this.fileService.remove(privateKey);
+        return {
+            message: 'Files deleted successfully!!'
+        };
     }
 };
 __decorate([
-    swagger_1.ApiOperation({ description: 'Uploads new file(s)' }),
+    swagger_1.ApiOperation({ description: 'Uploads new files' }),
     common_1.Post(),
-    common_1.UseInterceptors(platform_express_1.FilesInterceptor('files', 20, {
+    nestjs_rate_limiter_1.RateLimit({
+        duration: 60 * 60 * 24,
+        points: Number(process.env.UPLOAD_LIMIT) || 1000
+    }),
+    common_1.UseInterceptors(platform_express_1.FilesInterceptor('files', 10, {
         storage: multer_1.diskStorage({
-            destination: './upload',
             filename: file_rename_middleware_1.editFileName,
+            destination: process.env.FOLDER
         })
     })),
     __param(0, common_1.UploadedFiles()),
@@ -48,24 +65,31 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FileController.prototype, "uploadFile", null);
 __decorate([
-    swagger_1.ApiOperation({ description: 'Returns all the files' }),
-    common_1.Get(),
+    swagger_1.ApiOperation({ description: 'Returns all files for a public key' }),
+    nestjs_rate_limiter_1.RateLimit({
+        duration: 60 * 60 * 24,
+        points: Number(process.env.DOWNLOAD_LIMIT) || 1000
+    }),
+    common_1.Get(':publicKey'),
+    __param(0, common_1.Param('publicKey')),
+    __param(1, common_1.Res()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
-], FileController.prototype, "findAll", null);
+], FileController.prototype, "downloadByKey", null);
 __decorate([
     swagger_1.ApiOperation({ description: 'Deletes a file' }),
-    common_1.Delete(':id'),
-    __param(0, common_1.Param('id')),
+    common_1.Delete(':privateKey'),
+    __param(0, common_1.Param('privateKey')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], FileController.prototype, "remove", null);
 FileController = __decorate([
     swagger_1.ApiTags('Files'),
     common_1.Controller('files'),
-    __metadata("design:paramtypes", [services_1.FileService])
+    __metadata("design:paramtypes", [services_1.FileService,
+        config_1.ConfigService])
 ], FileController);
 exports.FileController = FileController;
 //# sourceMappingURL=file.controller.js.map

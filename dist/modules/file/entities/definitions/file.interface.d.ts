@@ -1,12 +1,13 @@
+import { StatusType } from "@common/enums/status.enum";
+import { StorageProviderType } from "@common/enums/storage.enum";
 export declare class IFile {
     id?: number;
     name: string;
-    action: string;
-    description?: string;
-    module: string;
-    sub_module: string;
-    child?: string;
-    created_by?: string;
-    created_at?: Date;
-    updated_at?: Date;
+    location: string;
+    provider: StorageProviderType;
+    publicKey: string;
+    privateKey: string;
+    status?: StatusType;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

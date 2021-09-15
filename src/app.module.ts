@@ -6,6 +6,8 @@ import configuration from './config/configuration';
 import { FileModule } from '@modules/file/file.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
+import { existsSync, mkdirSync } from 'fs';
+import { FileAccessModule } from '@modules/file-process/file-process.module';
 
 @Module({
   imports: [
@@ -21,10 +23,24 @@ import { MulterModule } from '@nestjs/platform-express';
       },
       inject: [ConfigService],
     }),
+    MulterModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        let dest = configService.get('storageFolder')
+        if (!existsSync(dest)) {
+          mkdirSync(dest);
+        }
+        return {
+          dest,
+        }
+      },
+      inject: [ConfigService],
+    }),
     HttpModule,
-    FileModule
+    FileModule,
+    FileAccessModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

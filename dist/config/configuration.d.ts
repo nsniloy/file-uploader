@@ -16,6 +16,10 @@ declare const _default: () => {
         };
         migrationsRun: boolean;
     };
-    folderRoot: string;
+    storageFolder: string;
+    provider: string;
+    downloadLimit: string | number;
+    uploadLimit: string | number;
+    bucketName: string;
 };
 export default _default;
