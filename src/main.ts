@@ -4,12 +4,12 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import * as compression from 'compression';
 import * as helmet from 'helmet';
 import { configSwagger } from '@config';
-import { HttpExceptionFilter } from '@common/exceptions';
+import { HttpExceptionFilter } from './common/exceptions';
 import * as zip from 'express-easy-zip'
 import {
   RequestLoggingInterceptor,
   ResponseTransformInterceptor,
-} from '@common/interceptors/http';
+} from './common/interceptors/http';
 import { ConfigService } from '@nestjs/config';
 
 const bootstrap = async () => {

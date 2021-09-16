@@ -1,1 +1,2 @@
-import { StatusType } from './status.enum';
+export * from './status.enum';
+export * from './storage.enum';

@@ -7,6 +7,7 @@ export default {
   password: process.env.DB_PASSWORD || 'Az-12345',
   database: process.env.DB_NAME || 'meldcx',
   autoLoadEntities: true,
+  keepConnectionAlive: true,
   charset: 'utf8',
   entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: true,

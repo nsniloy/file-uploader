@@ -1,4 +1,4 @@
-import { IFile } from '@modules/file/entities/definitions/file.interface';
+import { IFile } from '../../file/entities/definitions/file.interface';
 import { Injectable } from '@nestjs/common';
 import { IFileStorage } from './definitions/file-storage.interface';
 import * as AdmZip from 'adm-zip';
@@ -26,9 +26,10 @@ export class LocalFileStorageService implements IFileStorage {
         files.forEach((item) => {
             unlinkSync(item.location)
         })
+        return;
     }
 
-    convertToZip(files: Array<Express.Multer.File>, publicKey: string) {
+    convertToZip(files: Array<Express.Multer.File>, publicKey: string): void {
         let zip = new AdmZip()
         //adding each file to zip
         files.forEach(element => {
@@ -37,5 +38,6 @@ export class LocalFileStorageService implements IFileStorage {
         });
         //saving zip file to disk
         zip.writeZip(`${this.storageFolder}/${publicKey}.zip`)
+        return;
     }
 }

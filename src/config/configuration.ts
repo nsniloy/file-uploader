@@ -1,4 +1,4 @@
-import { StorageProviderType } from '@common/enums/storage.enum';
+import { StorageProviderType } from '../common/enums/storage.enum';
 import dbConfig from './database.config';
 
 export default () => {

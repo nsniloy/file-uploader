@@ -1,5 +1,4 @@
-import { StatusType } from "@common/enums/status.enum";
-import { StorageProviderType } from "@common/enums/storage.enum";
+import { StatusType, StorageProviderType } from "../../../../common/enums";
 
 export class IFile {
   id?: number;

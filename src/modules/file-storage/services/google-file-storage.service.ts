@@ -1,4 +1,4 @@
-import { IFile } from '@modules/file/entities/definitions/file.interface';
+import { IFile } from '../../file/entities/definitions/file.interface';
 import { Injectable } from '@nestjs/common';
 import { IFileStorage } from './definitions/file-storage.interface';
 import { ConfigService } from '@nestjs/config';
@@ -48,7 +48,7 @@ export class GoogleFileStorageService implements IFileStorage {
     }
 
     private getCredentials(){
-        let filePath = this.config.get('configuration')
+        let filePath: string = this.config.get('configuration')        
         let cred = JSON.parse(readFileSync(filePath, 'utf-8'))
         return cred
     }

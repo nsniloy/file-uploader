@@ -1,6 +1,6 @@
 import { File } from '../entities/file.entity';
 import { EntityRepository, LessThan, Repository } from 'typeorm';
-import { StatusType } from '@common/enums/status.enum';
+import { StatusType } from '../../../common/enums';
 
 @EntityRepository(File)
 export class FileRepository extends Repository<File> {

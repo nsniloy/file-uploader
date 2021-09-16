@@ -12,12 +12,12 @@ import { FileService } from '../services';
 import { ApiOperation, ApiTags, ApiConsumes } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
-import { editFileName } from '@common/middlewares/file-rename.middleware';
+import { editFileName } from '../../../common/middlewares/file-rename.middleware';
 import { Response } from 'express';
 import { IFile } from '../entities/definitions/file.interface';
 import { ConfigService } from '@nestjs/config';
 import { RateLimit } from 'nestjs-rate-limiter';
-import { ApiFile } from '@common/decorators/api-file.decorator';
+import { ApiFile } from '../../../common/decorators/api-file.decorator';
 
 @ApiTags('Files')
 @Controller('files')
@@ -56,12 +56,12 @@ export class FileController {
   @Get(':publicKey')
   async downloadByKey(@Param('publicKey') publicKey: string, @Res() res: Response) {
     let files: IFile[] = await this.fileService.findByKey(publicKey);
-    if (files.length == 1) {
-      res.download(files[0].location)
-    } else {
+    let location:string = files[0]?.location
+    if (files.length >1) {
       let folderRoot = this.configService.get('storageFolder')
-      res.download(`${folderRoot}/${publicKey}.zip`)
+      location = `${folderRoot}/${publicKey}.zip`
     }
+    res.download(location)
   }
 
   @ApiOperation({ description: 'Deletes a file' })

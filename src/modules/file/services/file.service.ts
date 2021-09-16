@@ -1,13 +1,11 @@
-import { StorageProviderType } from '@common/enums/storage.enum';
-import { BadRequestException, ConflictException, HttpException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createDiffieHellman } from 'crypto';
 import { IFile } from '../entities/definitions/file.interface';
 import { FileRepository } from '../repository/file.repository';
-import { LocalFileStorageService } from '@modules/file-storage/services/local-file-storage.service';
-import { GoogleFileStorageService } from '@modules/file-storage/services/google-file-storage.service';
-import { StatusType } from '@common/enums/status.enum';
-import { LessThan, MoreThan } from 'typeorm';
+import { LocalFileStorageService } from '../../file-storage/services/local-file-storage.service';
+import { GoogleFileStorageService } from '../../file-storage/services/google-file-storage.service';
+import { StatusType, StorageProviderType } from '../../../common/enums';
 import * as moment from 'moment';
 
 @Injectable()
@@ -68,31 +66,29 @@ export class FileService {
         item.status = StatusType.Deleted
         return item
       })
+      if (!files.length) {
+        return {};
+      }
       if (files[0].provider == StorageProviderType.Local) {
         this.localFileStorageService.removeFiles(files)
       } else {
         this.googleFileStorageService.removeFiles(files)
       }
       await this.repository.save(files);
-      return;
+      return {};
     } catch (error) {
       Logger.error(error.message)
       throw new ConflictException(error.message || 'Could not remove the file!!')
     }
   }
 
-  async findExpired() {
-    let date = new Date(moment().subtract(this.activePeriod, 'days').format())
-    let files = await this.repository.findExpired(date);
-    return files;
-  }
-
   async removeExpired() {
     try {
       //getting files that will be deleted
-      let files: IFile[] = await this.findExpired();
+      let date = new Date(moment().subtract(this.activePeriod, 'days').format())
+      let files: IFile[] = await this.repository.findExpired(date);
       if (!files.length) {
-        return;
+        return {};
       }
       let localFiles: IFile[] = []
       let googleFiles: IFile[] = []
@@ -114,14 +110,14 @@ export class FileService {
       this.googleFileStorageService.removeFiles(googleFiles);
       await this.repository.save(files);
 
-      return;
+      return {};
     } catch (error) {
       Logger.error(error);
       throw new ConflictException('Could not save the file!!');
     }
   }
 
-  private generateKeys() {
+  generateKeys() {
     //create public key and private key
     let diffHell = createDiffieHellman(60);
     diffHell.generateKeys('hex');
