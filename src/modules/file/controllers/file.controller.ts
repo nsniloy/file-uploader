@@ -38,7 +38,7 @@ export class FileController {
   @UseInterceptors(FilesInterceptor('files', 10, {
     storage: diskStorage({ //setting up file saving configuration
       filename: editFileName,
-      destination: process.env.FOLDER
+      destination: process.env.FOLDER || 'uploads'
     })
   }))
   async uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {

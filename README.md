@@ -8,8 +8,13 @@
 
 <br />
 
+### Api Documentation
+`{{host}}/api-doc`
+
+<br />
+
 ### Sample env file
-`env.example`
+`env.example` (rename this file to .env)
 
 <br />
 
